@@ -1,80 +1,63 @@
-const undoButton = document.getElementById('undo');
-const redoButton = document.getElementById('redo');
-const fontNameSelect = document.getElementById('fontName');
-const fontSizeSelect = document.getElementById('fontSize');
-const fontColorInput = document.getElementById('fontColor');
-const textInput = document.getElementById('text-input');
+let isDragging = false;
+    let offset = { x: 0, y: 0 };
 
+    const draggableText = document.getElementById('draggableText');
+    const textAreaContainer = document.getElementById('textAreaContainer');
+    const textArea = document.getElementById('textArea');
+    const fontFamilySelect = document.getElementById('fontFamilySelect');
+    const colorPicker = document.getElementById('colorPicker');
+    const fontSizeSelect = document.getElementById('fontSizeSelect');
 
-let currentDraggedElement = null;
-const undoStack = [];
-const redoStack = [];
+    draggableText.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        offset = {
+            x: e.clientX - draggableText.getBoundingClientRect().left,
+            y: e.clientY - draggableText.getBoundingClientRect().top
+        };
+        draggableText.style.cursor = 'grabbing';
+    });
 
-function undo() {
-    if (undoStack.length > 1) {
-        redoStack.push(undoStack.pop());
-        textInput.innerHTML = undoStack[undoStack.length - 1];
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const x = e.clientX - textAreaContainer.getBoundingClientRect().left - offset.x;
+        const y = e.clientY - textAreaContainer.getBoundingClientRect().top - offset.y;
+
+        draggableText.style.left = `${Math.max(0, Math.min(x, textAreaContainer.clientWidth - draggableText.clientWidth))}px`;
+        draggableText.style.top = `${Math.max(0, Math.min(y, textAreaContainer.clientHeight - draggableText.clientHeight))}px`;
+    });
+
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+        draggableText.style.cursor = 'grab';
+    });
+
+    function undo() {
+        document.execCommand('undo', false, null);
     }
-}
 
-undoButton.addEventListener('click', undo);
-
-function redo() {
-    if (redoStack.length > 0) {
-        undoStack.push(redoStack.pop());
-        textInput.innerHTML = undoStack[undoStack.length - 1];
+    function redo() {
+        document.execCommand('redo', false, null);
     }
-}
 
-redoButton.addEventListener('click', redo);
-
-textInput.addEventListener('input', () => {
-    redoStack.length = 0;
-    undoStack.push(textInput.innerHTML);
-});
-
-for (let i = 1; i <= 50; i++) {
-    const option = document.createElement('option');
-    option.textContent = i;
-    fontSizeSelect.appendChild(option);
-}
-
-fontNameSelect.addEventListener('change', () => {
-    applyStyle('fontFamily', fontNameSelect.value);
-    saveState();
-});
-
-fontSizeSelect.addEventListener('change', () => {
-    applyStyle('fontSize', fontSizeSelect.value + 'px');
-    saveState();
-});
-
-fontColorInput.addEventListener('input', () => {
-    applyStyle('color', fontColorInput.value);
-    saveState();
-});
-
-function applyStyle(style, value) {
-    const selection = window.getSelection();
-    if (selection.rangeCount > 0) {
-        const range = selection.getRangeAt(0);
-        const selectedText = range.extractContents();
-        const span = document.createElement('span');
-        span.style[style] = value;
-        span.appendChild(selectedText);
-        range.insertNode(span);
+    function insertText() {
+        const newText = textArea.value;
+        if (newText.trim() !== '') {
+            draggableText.textContent = neText;
+            textArea.value = '';
+        }
     }
-}
-function addTextBox() {
 
-    const textInput = document.getElementById('text-input');
-    const textBox = document.createElement('input');
-    textBox.type = 'text';
-    textInput.appendChild(textBox);
-    textBox.focus();
-   
-}
+    function changeFontFamily() {
+        const selectedFontFamily = fontFamilySelect.value;
+        document.execCommand('fontName', false, selectedFontFamily);
+    }
 
-function saveState() {
-    undoStack.push(textInput.innerHTML);
-}
+    function changeTextColor() {
+        const selectedColor = colorPicker.value;
+        document.execCommand('foreColor', false, selectedColor);
+    }
+
+    function changeTextSize() {
+        const selectedSize = fontSizeSelect.value;
+        document.execCommand('fontSize', false, selectedSize);
+    }
