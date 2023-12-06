@@ -5,7 +5,7 @@
 }
 
 body {
-  background: #55a0dd;
+  background: #a8d3f6;
 }
 .container {
   background: #ffffff;
@@ -68,12 +68,18 @@ input[type="color"]::-moz-color-swatch {
   box-shadow: 0 0 0 2px #ffffff, 0 0 0 3px #020929;
 }
 #text-input {
-  margin-top: 10px;
+  margin-top: 20px;
   border: 1px solid #dddddd;
   padding: 20px;
   height: 50vh;
 }
 input[type="text"] {
-  margin-top: 15%;
-  margin-left: 30%;
+  border: none;
+  outline: none;
+}
+.new {
+  background-color: #dddddd;
+  width: 50px;
+  height: 40px;
+  padding: 2px;
 }

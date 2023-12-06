@@ -6,8 +6,7 @@ const fontColorInput = document.getElementById('fontColor');
 const textInput = document.getElementById('text-input');
 
 
-
-
+let currentDraggedElement = null;
 const undoStack = [];
 const redoStack = [];
 
@@ -66,8 +65,15 @@ function applyStyle(style, value) {
         range.insertNode(span);
     }
 }
+function addTextBox() {
 
-newTextBoxButton.addEventListener('click', newTextBox);
+    const textInput = document.getElementById('text-input');
+    const textBox = document.createElement('input');
+    textBox.type = 'text';
+    textInput.appendChild(textBox);
+    textBox.focus();
+   
+}
 
 function saveState() {
     undoStack.push(textInput.innerHTML);
